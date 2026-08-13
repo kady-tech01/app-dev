@@ -1,98 +1,189 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  Pressable,
+  FlatList,
+  StatusBar,
+  Alert,
+} from 'react-native';
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+// 1. مصفوفة بيانات وهمية تشبه البيانات القادمة مستقبلاً من Django REST API
+interface Course {
+  id: string;
+  title: string;
+  instructor: string;
+  lessonsCount: number;
+  imageUri: string;
+}
+
+const COURSES_DATA: Course[] = [
+  {
+    id: '1',
+    title: 'إدارة المالية للشركات الناشئة',
+    instructor: 'د. خديجة',
+    lessonsCount: 12,
+    imageUri: 'https://picsum.photos/200/300?random=1',
+  },
+  {
+    id: '2',
+    title: 'بناء تطبيقات الموبايل بـ Expo',
+    instructor: 'م. أحمد',
+    lessonsCount: 18,
+    imageUri: 'https://picsum.photos/200/300?random=2',
+  },
+  {
+    id: '3',
+    title: 'أساسيات Django REST Framework',
+    instructor: 'م. يوسف',
+    lessonsCount: 15,
+    imageUri: 'https://picsum.photos/200/300?random=3',
+  },
+];
 
 export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+  // دالة التعامل مع ضغط الكورس
+  const handleSelectCourse = (course: Course) => {
+    setSelectedId(course.id);
+    Alert.alert('تم اختيار الكورس', `لقد اخترتِ: ${course.title}`);
+  };
+
+  return (
+    <View style={styles.container}>
+      <StatusBar barStyle="dark-content" />
+
+      {/* الهيدر باستخدام View و Text و Image */}
+      <View style={styles.header}>
+        <Image
+          source={{ uri: 'https://reactnative.dev/img/tiny_logo.png' }}
+          style={styles.logo}
+        />
+        <View>
+          <Text style={styles.welcomeText}>مرحباً بكِ مجدداً 👋</Text>
+          <Text style={styles.appTitle}>منصة elvolearn التعليمية</Text>
+        </View>
+      </View>
+
+      <Text style={styles.sectionHeader}>الكورسات المتاحة حالياً:</Text>
+
+      {/* عرض القائمة باستخدام FlatList بدلاً من ScrollView للأداء العالي */}
+      <FlatList
+        data={COURSES_DATA}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => {
+          const isSelected = item.id === selectedId;
+
+          return (
+            <Pressable
+              onPress={() => handleSelectCourse(item)}
+              style={({ pressed }) => [
+                styles.courseCard,
+                isSelected && styles.selectedCard,
+                pressed && styles.pressedCard, // تأثير بصري عند الضغط
+              ]}
+            >
+              {/* صورة الكورس - يلزم تحديد width و height */}
+              <Image
+                source={{ uri: item.imageUri }}
+                style={styles.courseImage}
+              />
+
+              <View style={styles.courseInfo}>
+                <Text style={styles.courseTitle}>{item.title}</Text>
+                <Text style={styles.instructorText}>المحاضر: {item.instructor}</Text>
+                <Text style={styles.lessonsText}>{item.lessonsCount} درس تعليمي</Text>
+              </View>
+            </Pressable>
+          );
+        }}
+        contentContainerStyle={styles.listPadding}
+      />
+    </View>
   );
 }
 
+// التنسيقات عبر StyleSheet API
 const styles = StyleSheet.create({
-  titleContainer: {
+  container: {
+    flex: 1,
+    backgroundColor: '#F8FAFC',
+    paddingTop: 60,
+    paddingHorizontal: 16,
+  },
+  header: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    marginBottom: 24,
+    backgroundColor: '#FFFFFF',
+    padding: 12,
+    borderRadius: 12,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  logo: {
+    width: 45,
+    height: 45,
+    marginRight: 12,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  welcomeText: {
+    fontSize: 13,
+    color: '#64748B',
+  },
+  appTitle: {
+    fontSize: 17,
+    fontWeight: 'bold',
+    color: '#0F172A',
+  },
+  sectionHeader: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#1E293B',
+    marginBottom: 12,
+  },
+  listPadding: {
+    paddingBottom: 20,
+  },
+  courseCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  selectedCard: {
+    borderColor: '#4F46E5',
+    backgroundColor: '#EEF2FF',
+  },
+  pressedCard: {
+    opacity: 0.8,
+  },
+  courseImage: {
+    width: 65,
+    height: 65,
+    borderRadius: 8,
+    marginRight: 12,
+  },
+  courseInfo: {
+    flex: 1,
+  },
+  courseTitle: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#1E293B',
+    marginBottom: 4,
+  },
+  instructorText: {
+    fontSize: 13,
+    color: '#475569',
+  },
+  lessonsText: {
+    fontSize: 12,
+    color: '#64748B',
+    marginTop: 2,
   },
 });
