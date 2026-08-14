@@ -1,189 +1,111 @@
-import React, { useState } from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  Pressable,
-  FlatList,
-  StatusBar,
-  Alert,
-} from 'react-native';
+import React from 'react';
+import { StyleSheet, Text, View, Pressable } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-// 1. مصفوفة بيانات وهمية تشبه البيانات القادمة مستقبلاً من Django REST API
-interface Course {
-  id: string;
-  title: string;
-  instructor: string;
-  lessonsCount: number;
-  imageUri: string;
-}
-
-const COURSES_DATA: Course[] = [
-  {
-    id: '1',
-    title: 'إدارة المالية للشركات الناشئة',
-    instructor: 'د. خديجة',
-    lessonsCount: 12,
-    imageUri: 'https://picsum.photos/200/300?random=1',
-  },
-  {
-    id: '2',
-    title: 'بناء تطبيقات الموبايل بـ Expo',
-    instructor: 'م. أحمد',
-    lessonsCount: 18,
-    imageUri: 'https://picsum.photos/200/300?random=2',
-  },
-  {
-    id: '3',
-    title: 'أساسيات Django REST Framework',
-    instructor: 'م. يوسف',
-    lessonsCount: 15,
-    imageUri: 'https://picsum.photos/200/300?random=3',
-  },
-];
-
-export default function HomeScreen() {
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-
-  // دالة التعامل مع ضغط الكورس
-  const handleSelectCourse = (course: Course) => {
-    setSelectedId(course.id);
-    Alert.alert('تم اختيار الكورس', `لقد اخترتِ: ${course.title}`);
-  };
-
+export default function Phase2Screen() {
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="dark-content" />
-
-      {/* الهيدر باستخدام View و Text و Image */}
-      <View style={styles.header}>
-        <Image
-          source={{ uri: 'https://reactnative.dev/img/tiny_logo.png' }}
-          style={styles.logo}
-        />
-        <View>
-          <Text style={styles.welcomeText}>مرحباً بكِ مجدداً 👋</Text>
-          <Text style={styles.appTitle}>منصة elvolearn التعليمية</Text>
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        
+        {/* هيدر علوي */}
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>elvolearn Dashboard</Text>
         </View>
+
+        {/* محتوى الشاشة الأوسط (مفهوم flex: 1) */}
+        <View style={styles.content}>
+          <Text style={styles.sectionTitle}>بطاقة تجربة Flexbox</Text>
+          
+          {/* حاوية أفقية لعرض كارتين جنباً إلى جنب */}
+          <View style={styles.row}>
+            <View style={[styles.card, styles.primaryCard]}>
+              <Text style={styles.cardTextLight}>الكورسات المسجلة</Text>
+              <Text style={styles.cardNumberLight}>12</Text>
+            </View>
+
+            <View style={[styles.card, styles.secondaryCard]}>
+              <Text style={styles.cardTextDark}>الساعات المكتملة</Text>
+              <Text style={styles.cardNumberDark}>48h</Text>
+            </View>
+          </View>
+        </View>
+
+        {/* فوتر أصفل الشاشة */}
+        <View style={styles.footer}>
+          <Pressable style={styles.button}>
+            <Text style={styles.buttonText}>متابعة الدراسة</Text>
+          </Pressable>
+        </View>
+
       </View>
-
-      <Text style={styles.sectionHeader}>الكورسات المتاحة حالياً:</Text>
-
-      {/* عرض القائمة باستخدام FlatList بدلاً من ScrollView للأداء العالي */}
-      <FlatList
-        data={COURSES_DATA}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => {
-          const isSelected = item.id === selectedId;
-
-          return (
-            <Pressable
-              onPress={() => handleSelectCourse(item)}
-              style={({ pressed }) => [
-                styles.courseCard,
-                isSelected && styles.selectedCard,
-                pressed && styles.pressedCard, // تأثير بصري عند الضغط
-              ]}
-            >
-              {/* صورة الكورس - يلزم تحديد width و height */}
-              <Image
-                source={{ uri: item.imageUri }}
-                style={styles.courseImage}
-              />
-
-              <View style={styles.courseInfo}>
-                <Text style={styles.courseTitle}>{item.title}</Text>
-                <Text style={styles.instructorText}>المحاضر: {item.instructor}</Text>
-                <Text style={styles.lessonsText}>{item.lessonsCount} درس تعليمي</Text>
-              </View>
-            </Pressable>
-          );
-        }}
-        contentContainerStyle={styles.listPadding}
-      />
-    </View>
+    </SafeAreaView>
   );
 }
 
-// التنسيقات عبر StyleSheet API
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
     backgroundColor: '#F8FAFC',
-    paddingTop: 60,
+  },
+  container: {
+    flex: 1, // يأخذ كامل ارتفاع الشاشة
     paddingHorizontal: 16,
+    justifyContent: 'space-between', // توزيع المحتوى بين الأعلى والمنتصف والأسفل
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 24,
-    backgroundColor: '#FFFFFF',
-    padding: 12,
-    borderRadius: 12,
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E2E8F0',
   },
-  logo: {
-    width: 45,
-    height: 45,
-    marginRight: 12,
-  },
-  welcomeText: {
-    fontSize: 13,
-    color: '#64748B',
-  },
-  appTitle: {
-    fontSize: 17,
+  headerTitle: {
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#0F172A',
   },
-  sectionHeader: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#1E293B',
-    marginBottom: 12,
+  content: {
+    flex: 1, // يملأ كامل المساحة المتبقية بين الهيدر والفوتر
+    justifyContent: 'center', // محاذاة في منتصف الشاشة عمودياً
   },
-  listPadding: {
-    paddingBottom: 20,
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#475569',
+    marginBottom: 16,
   },
-  courseCard: {
-    backgroundColor: '#FFFFFF',
+  row: {
+    flexDirection: 'row', // تغيير الترتيب ليكون أفقياً لصف الكروت
+    gap: 12, // مسافة بين الكروت
+  },
+  card: {
+    flex: 1, // كل كارت يأخذ نصف المساحة المتاحة أفقياً
+    padding: 16,
     borderRadius: 12,
-    padding: 12,
-    marginBottom: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  primaryCard: {
+    backgroundColor: '#4F46E5',
+  },
+  secondaryCard: {
+    backgroundColor: '#FFFFFF',
     borderWidth: 1,
     borderColor: '#E2E8F0',
   },
-  selectedCard: {
-    borderColor: '#4F46E5',
-    backgroundColor: '#EEF2FF',
+  cardTextLight: { color: '#E0E7FF', fontSize: 13 },
+  cardNumberLight: { color: '#FFFFFF', fontSize: 24, fontWeight: 'bold', marginTop: 8 },
+  cardTextDark: { color: '#64748B', fontSize: 13 },
+  cardNumberDark: { color: '#0F172A', fontSize: 24, fontWeight: 'bold', marginTop: 8 },
+  footer: {
+    paddingVertical: 16,
   },
-  pressedCard: {
-    opacity: 0.8,
+  button: {
+    backgroundColor: '#0F172A',
+    paddingVertical: 14,
+    borderRadius: 10,
+    alignItems: 'center',
   },
-  courseImage: {
-    width: 65,
-    height: 65,
-    borderRadius: 8,
-    marginRight: 12,
-  },
-  courseInfo: {
-    flex: 1,
-  },
-  courseTitle: {
-    fontSize: 15,
+  buttonText: {
+    color: '#FFFFFF',
     fontWeight: 'bold',
-    color: '#1E293B',
-    marginBottom: 4,
-  },
-  instructorText: {
-    fontSize: 13,
-    color: '#475569',
-  },
-  lessonsText: {
-    fontSize: 12,
-    color: '#64748B',
-    marginTop: 2,
+    fontSize: 15,
   },
 });
