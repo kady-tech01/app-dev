@@ -9,7 +9,7 @@ export default function Phase2Screen() {
         
         {/* هيدر علوي */}
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>elvolearn Dashboard</Text>
+          <Text style={styles.headerTitle}>Courses Dashboard</Text>
         </View>
 
         {/* محتوى الشاشة الأوسط (مفهوم flex: 1) */}
