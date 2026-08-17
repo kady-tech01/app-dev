@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 
-const BASE_URL = 'http://192.168.85.166:8000/api'; 
+const BASE_URL = 'https://currency-app-ymga.onrender.com'; 
 
 const api = axios.create({
   baseURL: BASE_URL,
