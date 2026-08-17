@@ -16,7 +16,7 @@ SECRET_KEY = 'django-insecure-r+(b!zi@^)tl3v70@)g3fju!d*w@mmh@jy7#tnurmklq#moy92
 DEBUG = True
 
 # Allow connections from mobile devices/local networks
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['192.168.85.166', 'localhost', '127.0.0.1', '*']
 
 
 # Application definition

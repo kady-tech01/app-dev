@@ -21,12 +21,18 @@ import {
 
 type TabType = 'converter' | 'calculator' | 'analytics' | 'favorites' | 'history';
 
+// 💡 Update this with your host machine IP
+const BACKEND_URL = 'http://192.168.85.166:8000/api/';
+
 export default function App() {
   const [activeTab, setActiveTab] = useState<TabType>('converter');
   const [isParallelMarket, setIsParallelMarket] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [lang, setLang] = useState<Language>('en');
   const [isLangModalOpen, setIsLangModalOpen] = useState(false);
+
+  // Backend Connection Test State
+  const [backendStatus, setBackendStatus] = useState<string>('Testing connection...');
 
   // Calculator State
   const [calcInput, setCalcInput] = useState('');
@@ -62,6 +68,17 @@ export default function App() {
     fetchRates();
     loadHistory();
     loadFavorites();
+
+    // 📡 Test Django Backend Connection
+    fetch(BACKEND_URL)
+      .then((res) => {
+        console.log('✅ Django Response Status:', res.status);
+        setBackendStatus(`✅ Connected to Backend (${res.status})`);
+      })
+      .catch((err) => {
+        console.error('❌ Django Connection Error:', err.message);
+        setBackendStatus('❌ Backend Disconnected');
+      });
   }, []);
 
   const isFavorite = favorites.some(
@@ -210,6 +227,19 @@ export default function App() {
               </Text>
             </TouchableOpacity>
           </View>
+        </View>
+
+        {/* 🟢 Backend Status Banner */}
+        <View style={[styles.statusBanner, { backgroundColor: theme.inputBg }]}>
+          <Text
+            style={{
+              color: backendStatus.includes('✅') ? '#10B981' : '#EF4444',
+              fontSize: 10,
+              fontWeight: 'bold',
+            }}
+          >
+            {backendStatus}
+          </Text>
         </View>
 
         {/* Tab 1: Converter */}
@@ -568,6 +598,13 @@ const styles = StyleSheet.create({
   topHeaderRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  statusBanner: {
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: 6,
     alignItems: 'center',
     marginBottom: 8,
   },

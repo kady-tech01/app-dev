@@ -1,29 +1,35 @@
 import axios from 'axios';
 
-// Replace with your local IP address for physical device / emulator testing
-const BASE_URL = 'http://192.168.1.15:8000/api'; 
+// استبدلي هذا الـ IP بـ IP حاسوبكِ (مثل 192.168.1.15)
+const BASE_URL = 'http://192.168.85.166:8000/api'; 
 
 const api = axios.create({
   baseURL: BASE_URL,
-  timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-export const fetchCurrencies = async () => {
-  const response = await api.get('/currencies/');
-  return response.data;
+// جلب أحدث أسعار الصرف
+export const getExchangeRates = async () => {
+  try {
+    const response = await api.get('/rates/');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching exchange rates:', error);
+    throw error;
+  }
 };
 
-export const fetchExchangeRates = async () => {
-  const response = await api.get('/rates/');
-  return response.data;
-};
-
+// إنشاء تنبيه سعر جديد
 export const createPriceAlert = async (alertData) => {
-  const response = await api.post('/alerts/', alertData);
-  return response.data;
+  try {
+    const response = await api.post('/alerts/', alertData);
+    return response.data;
+  } catch (error) {
+    console.error('Error creating price alert:', error);
+    throw error;
+  }
 };
 
 export default api;
