@@ -22,7 +22,7 @@ import {
 type TabType = 'converter' | 'calculator' | 'analytics' | 'favorites' | 'history';
 
 // 💡 Update this with your host machine IP
-const BACKEND_URL = 'http://192.168.85.166:8000/api/';
+const BACKEND_URL = 'https://currency-app-ymga.onrender.com';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<TabType>('converter');
