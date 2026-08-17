@@ -7,3 +7,4 @@ mysqlclient
 pillow
 requests
 dj-database-url
+whitenoise
